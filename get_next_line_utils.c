@@ -3,11 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tvanbesi <tvanbesi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: thomas <thomas@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/14 23:49:35 by tvanbesi          #+#    #+#             */
-/*   Updated: 2019/11/14 23:50:23 by tvanbesi         ###   ########.fr       */
+/*   Updated: 2019/11/16 02:09:14 by thomas           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+
+ssize_t
+    ft_linext(char *line, char *buf)
+{
+    
+}

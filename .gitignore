@@ -1,5 +1,4 @@
 *.o
-test
-test.dSYM
+*test*
 *.out
 *.a
