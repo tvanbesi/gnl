@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line_utils.c                              :+:      :+:    :+:   */
+/*   get_next_line_utils_bonus.c                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tvanbesi <tvanbesi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/14 23:49:35 by tvanbesi          #+#    #+#             */
-/*   Updated: 2019/11/26 17:08:58 by tvanbesi         ###   ########.fr       */
+/*   Updated: 2019/11/26 19:15:54 by tvanbesi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 static void
 	ft_strncat(char *dst, const char *src, size_t n)
@@ -74,11 +74,26 @@ char
 }
 
 int
-	ft_clear(t_buf *tbuf, int r)
+	ft_rmelem(t_buf **lbuf, int r, int fd)
 {
-	free(tbuf->buf);
-	tbuf->buf = NULL;
-	tbuf->ofs = 0;
-	tbuf->ltr = 0;
+	t_buf	*current;
+	t_buf	*previous;
+
+	current = *lbuf;
+	while (fd && current)
+	{
+		if (current->fd == fd)
+		{
+			if (current == *lbuf)
+				*lbuf = current->next;
+			else
+				previous->next = current->next;
+			free(current->buf);
+			free(current);
+			return (r);
+		}
+		previous = current;
+		current = current->next;
+	}
 	return (r);
 }

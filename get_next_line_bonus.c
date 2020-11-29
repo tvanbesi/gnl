@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tvanbesi <tvanbesi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/18 20:58:02 by tvanbesi          #+#    #+#             */
-/*   Updated: 2019/11/26 19:12:57 by tvanbesi         ###   ########.fr       */
+/*   Updated: 2019/11/26 20:06:58 by tvanbesi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 static int
 	make_next_line(int fd, char **line, t_buf *tbuf)
@@ -42,31 +42,77 @@ static int
 	return (1);
 }
 
+static void
+	ft_lstadd_back(t_buf **head, t_buf *new)
+{
+	t_buf	*last;
+
+	if (!*head)
+		last = NULL;
+	else
+	{
+		last = *head;
+		while (last->next)
+			last = last->next;
+	}
+	if (!last)
+		*head = new;
+	else
+		last->next = new;
+}
+
+static t_buf
+	*ft_findfd(int fd, t_buf **lbuf)
+{
+	t_buf	*tmp;
+
+	tmp = *lbuf;
+	while (tmp)
+	{
+		if (tmp->fd == fd)
+			return (tmp);
+		tmp = tmp->next;
+	}
+	if (!(tmp = (t_buf*)malloc(sizeof(t_buf))))
+		return (NULL);
+	if (!(tmp->buf = (char*)malloc(BUFFER_SIZE)))
+	{
+		free(tmp);
+		return (NULL);
+	}
+	tmp->fd = fd;
+	tmp->ofs = 0;
+	tmp->ltr = 0;
+	tmp->next = NULL;
+	ft_lstadd_back(lbuf, tmp);
+	return (tmp);
+}
+
 int
 	get_next_line(int fd, char **line)
 {
-	static t_buf	tbuf;
+	static t_buf	*lbuf;
+	t_buf			*tbuf;
 	ssize_t			b;
 	int				mnl;
 
 	if (!BUFFER_SIZE || !line || read(fd, NULL, 0) == -1
 		|| !(*line = ft_strxtd(NULL, NULL, 0)))
 		return (-1);
-	if (!(tbuf.buf))
-		if (!(tbuf.buf = (char*)malloc(BUFFER_SIZE)))
-			return (-1);
+	if (!(tbuf = ft_findfd(fd, &lbuf)))
+		return (-1);
 	b = 0;
-	if (tbuf.ofs || (b = read(fd, tbuf.buf, BUFFER_SIZE)))
+	if (tbuf->ofs || (b = read(fd, tbuf->buf, BUFFER_SIZE)))
 	{
 		if (b && b < BUFFER_SIZE)
-			tbuf.ltr = (size_t)b;
-		if ((mnl = make_next_line(fd, line, &tbuf)) == 1)
+			tbuf->ltr = (size_t)b;
+		if ((mnl = make_next_line(fd, line, tbuf)) == 1)
 			return (1);
 		else if (mnl == 0)
-			return (ft_clear(&tbuf, 0));
+			return (ft_rmelem(&lbuf, 0, fd));
 		else
 			return (-1);
 	}
 	else
-		return (ft_clear(&tbuf, 0));
+		return (ft_rmelem(&lbuf, 0, fd));
 }
